@@ -4,13 +4,13 @@ A private chat window for Capri
 
 - Kind: code
 - Made by: Mirit0
-- Version: 2.1.6
+- Version: 2.1.12
 
-## Note: when installing or turning on the mod, Capri freezes for a few seconds
+## Note: Needs time to load every chat when you open it for the first time
 
 ## What it does
 
-Ask Capri to open her chat ("open Caprichat", "let's DM", "show our chat") and the window appears.
+Ask Capri to open her chat ("Caprichat", "open Caprichat", "let's DM", "show our chat") and the window appears.
 
 **Two-way, fully synced**
 - Everything you say by voice and everything Capri says shows up in the chat, and anything you type in the chat goes to Capri as a normal turn — including her spoken reply.
@@ -21,7 +21,7 @@ Ask Capri to open her chat ("open Caprichat", "let's DM", "show our chat") and t
 **Messaging**
 - Reply to any message and Capri answers with the quoted thread as context.
 - Attach images to a message, by button or by paste.
-- Search the whole archive.
+- Search the whole archive. (to clear search filter, delete the search topic and press enter)
 - Emoji reactions on any message, with recent emojis, an emoji picker, installable emoji packs (separate mods).
 
 **Capri reacts back**
