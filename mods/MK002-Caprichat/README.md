@@ -2,9 +2,9 @@
 
 A private chat window for Capri
 
-Kind: code
-Made by: Mirit0
-Version: 2.1.6
+- Kind: code
+- Made by: Mirit0
+- Version: 2.1.6
 
 ## What it does
 
