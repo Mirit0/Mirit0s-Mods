@@ -6,6 +6,8 @@ A private chat window for Capri
 - Made by: Mirit0
 - Version: 2.1.6
 
+## Note: when installing or turning on the mod, Capri freezes for a few seconds
+
 ## What it does
 
 Ask Capri to open her chat ("open Caprichat", "let's DM", "show our chat") and the window appears.
