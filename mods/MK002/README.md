@@ -11,7 +11,7 @@ Version: 2.1.6
 Ask Capri to open her chat ("open Caprichat", "let's DM", "show our chat") and the window appears.
 
 **Two-way, fully synced**
-- Everything you say by voice and everything Capri says shows up in the chat, and anything you type in the chat goes to Capri as a normal turn — including her spoken reply.
+- Everything you say by voice and everything Capri says shows up in the chat, and anything you type in the chat goes to Capri's transcript including her spoken reply.
 - Live sync from her transcripts and conversation history, with duplicate detection so nothing is listed twice.
 - Chats are split by date
 - Older days open read-only; reply to a message to write into them.
