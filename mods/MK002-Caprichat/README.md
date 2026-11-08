@@ -4,7 +4,7 @@ A private chat window for Capri
 
 - Kind: code
 - Made by: Mirit0
-- Version: 2.1.12
+- Version: 2.1.14
 
 ## Notes: 
 - **Needs time to load every chat when you open it for the first time**
