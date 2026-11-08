@@ -7,8 +7,8 @@ A private chat window for Capri
 - Version: 2.1.12
 
 ## Notes: 
-**Needs time to load every chat when you open it for the first time**
-**Does not come with Emoji's, those come in separate pack mods that need to be installed**
+- **Needs time to load every chat when you open it for the first time**
+- **Does not come with Emoji's, those come in separate pack mods that need to be installed**
 
 ## What it does
 
