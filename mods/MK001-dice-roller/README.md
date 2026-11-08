@@ -1,6 +1,6 @@
 # MK001 Dice Roller
 
-Roll animated 3D tabletop dice or flip a coin with Capri. Supports D4, D6, D8, D10, D12, D20 and D100 (two percentile dice), with numbered faces, cyberpunk visuals and Natural Commentary.
+Roll animated 3D tabletop dice or flip a coin with Capri. Supports D4, D6, D8, D10, D12, D20 and D100 (two percentile dice), with numbered faces, cyberpunk visuals and Natural Commentary (reads her personality, notes, memories, and recent messages).
 Now with SOUNDS
 
 - Kind: code
