@@ -10,13 +10,13 @@ Gives Capri a Sandevistan, activates when moving, options in the .capri-code fil
 
 Capri leaves a trail of afterimages behind her whenever she moves fast. Drag her across the screen, or throw her, and she activates her Sandy.
 
-"Edgerunners"  = cyan -> red -> yellow -> cyan
-"Rainbow"      = cyan -> magenta -> yellow -> cyan
-"RedOnly"      = red -> red -> red -> red
-"BlueFire"     = cyan -> blue -> violet -> cyan
-"NormalColors" = ORIGINAL Capri colors, no tint; the afterimages just fade
-"Original"     = alias for "NormalColors"
-"Custom"       = use the CustomCycleColor values below
+- "Edgerunners"  = cyan -> red -> yellow -> cyan
+- "Rainbow"      = cyan -> magenta -> yellow -> cyan
+- "RedOnly"      = red -> red -> red -> red
+- "BlueFire"     = cyan -> blue -> violet -> cyan
+- "NormalColors" = ORIGINAL Capri colors, no tint; the afterimages just fade
+- "Original"     = alias for "NormalColors"
+- "Custom"       = use the CustomCycleColor values below
 
 With "Custom" you can choose three RGB colors for Capri's afterimages to use
 
