@@ -1,9 +1,9 @@
-Emoji Pack : Smileys & Emotion
+# Emoji Pack : Smileys & Emotion
+
 Adds more emojis to use in Mirit0's Caprichat
 
-* Kind: code
-
-* Made by: Mirit0
+- Kind: code
+- Made by: Mirit0
 
 171 emojis in this pack:
 

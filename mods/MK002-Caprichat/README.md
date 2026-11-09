@@ -10,6 +10,8 @@ A private chat window for Capri
 - **Needs time to load every chat when you open it for the first time**
 - **Does not come with Emoji's (because of .capri-code size limits), those come in separate pack mods that need to be installed**
 
+On first start, Caprichat offers emoji pack mods with "DOWNLOAD SELECTED", which installs the selected packs through Capri's own importer. Each pack still goes through Capri's normal code mod prompt.
+
 ## What it does
 
 Ask Capri to open her chat ("Caprichat", "open Caprichat", "let's DM", "show our chat") and the window appears.

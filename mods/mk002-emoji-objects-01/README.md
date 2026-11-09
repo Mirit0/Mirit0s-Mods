@@ -1,9 +1,9 @@
-Emoji Pack : Objects 1
+# Emoji Pack : Objects 1
+
 Adds more emojis to use in Mirit0's Caprichat
 
-* Kind: code
-
-* Made by: Mirit0
+- Kind: code
+- Made by: Mirit0
 
 266 emojis in this pack:
 
