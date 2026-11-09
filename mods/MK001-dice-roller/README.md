@@ -30,6 +30,7 @@ personal or urgent messages are not captured by Dice Roller. Unsupported or ambi
 This mod reads Capri's **personality, notes, memories, and recent chat messages**, and includes excerpts in the AI request to create an in character response to the dice result. If Capri uses an online provider the context is sent to that configured AI provider. If the configured provider runs locally it is processed locally. This behavior is part of the mod's AI commentary feature, not a separate memory system.
 
 **Dice and coin sound effects:** sourced from Pixabay, but I couldnt located the sounds as I'm updating this README.
+**Celebration sound effects:** sourced from Pixabay.
 
 P.S. 
 Responses take a bit longer on higher intelligence
