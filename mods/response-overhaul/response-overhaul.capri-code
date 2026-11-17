@@ -4,6 +4,7 @@
 // version: 2.9.2
 // author: Mirit0
 // description: Generates new responses/reactions for Capri
+// permissions: chat,voice,memory
 
 using System;
 using System.Collections;
