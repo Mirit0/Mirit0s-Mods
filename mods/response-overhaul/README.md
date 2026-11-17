@@ -9,7 +9,6 @@ Capri writes her own reactions instead of repeating the built-in ones. Every pet
 
 - **Fresh lines, permanently.** Each reaction is generated ahead of time and kept ready.
 - **Pre-rendered voice.** Lines are synthesized to WAV in the background and cached, so a reaction plays the instant it is triggered instead of waiting on a voice request mid-gesture.
-- **She uses your name.** Anything that comes back saying "user" is swapped for the name you set under *What should she call you?*. Leave it empty and she falls back to "choom".
 - **Stays out of the way.** Nothing is generated while she is chatting, speaking, running a task or working a job.
 
 ## Settings
