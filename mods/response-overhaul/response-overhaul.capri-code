@@ -23,10 +23,10 @@ using CapriDesktop;
 public sealed class AiResponseOverhaul : ICapriMod
 {
     // ================== USER CONFIG (edit these by hand) ==================
-    // true puts the advanced buttons back in the options pane (debugger,
-    // regenerate, audio/cache, dialogue test, greeting memory). They stay on
-    // Capri's mod menu either way, so false hides them, never removes them.
-    private static readonly bool ShowAdvancedOptions = false;
+    // true shows DEBUG / DIAGNOSTICS at the TOP of the loader options.
+    // These tools are accessible immediately; other options scroll below.
+    // They remain in Capri's mod menu when this is false.
+    private static readonly bool ShowAdvancedOptions = true;
 
     // Lines kept ready per reaction, 1..24; anything unlisted uses this.
     private const int DefaultLinesPerAction = 2;
@@ -106,7 +106,7 @@ public sealed class AiResponseOverhaul : ICapriMod
         int count;
         return Math.Max(1, Math.Min(24, LinesPerAction.TryGetValue(id, out count) ? count : DefaultLinesPerAction));
     }
-    const string Version = "2.9.2";
+    const string Version = "2.9.3";
     const string Physical = "physical", Board = "board", Gaming = "gaming", Other = "other";
     const BindingFlags IF = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
     const BindingFlags SF = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
@@ -1365,11 +1365,14 @@ public sealed class AiResponseOverhaul : ICapriMod
     }
     private void WatchTrouble()
     {
+        // A persistent genuine error belongs in diagnostics, not Capri's dialogue.
+        // Expected quality-filter rejections are not treated as generator errors.
         if(lastError==null){troubleSince=DateTime.MinValue;troubleTold=false;return;}
         if(troubleSince==DateTime.MinValue){troubleSince=DateTime.UtcNow;return;}
         if(troubleTold || (DateTime.UtcNow-troubleSince).TotalSeconds<25)return;
         troubleTold=true;
-        Tell("My dialogue generator is stuck, choom. Take a peek at the reaction debugger.");
+        Debug("PERSISTENT ERROR",currentPool,"Still seeing an error after 25s: "+Short(lastError,120));
+        try{host.Log("Response Overhaul diagnostic: "+lastError);}catch{}
     }
     private void Tell(string line)
     {
@@ -1938,8 +1941,11 @@ public sealed class AiResponseOverhaul : ICapriMod
                 int cooldown=TopicRetrySeconds(pool.Failures);
                 if(pool.Failures==8 || pool.Failures==15)
                     Debug("POOL BACKOFF",pool.Id,pool.Failures+" rejected attempts; waiting "+cooldown+"s while other topics generate");
-                Debug("REJECTED",pool.Id,Short(detail,185));
-                lastError=Short(pool.Id+": "+detail,165);
+                Debug(problem==null?"FILTERED":"GENERATOR ERROR",pool.Id,Short(detail,185));
+                // Normal candidate rejections happen by design and must NOT trigger
+                // stuck/error notifications or mark the progress indicator as broken.
+                if(problem!=null)lastError=Short("Generator: "+pool.Id+": "+detail,165);
+                else if(lastError!=null && lastError.StartsWith("Generator: ",StringComparison.Ordinal))lastError=null;
                 rejectionTrace.Enqueue(DateTime.Now.ToString("HH:mm:ss")+" | "+pool.Id+" | "+Short(detail,180));
                 while(rejectionTrace.Count>100)rejectionTrace.Dequeue();
                 pool.Retry=DateTime.UtcNow.AddSeconds(cooldown);
@@ -2645,13 +2651,51 @@ public sealed class AiResponseOverhaul : ICapriMod
     }
     private Control MakeOptions()
     {
-        Panel pane=new Panel { Width=780, Height=305, BackColor=Back, ForeColor=Fore, AutoScroll=true };
-        int y=16;
-        AddSetting(pane,"Allow 5-second cursor lock (Esc releases)",cursorLock,y,delegate(bool value){cursorLock=value;SaveSettings();PrepareRetaliationAnnouncements();}); y+=55;
-        AddSetting(pane,"Allow icon shuffle (restores after 10 seconds)",iconShuffle,y,delegate(bool value){iconShuffle=value;SaveSettings();PrepareRetaliationAnnouncements();}); y+=55;
-        AddSetting(pane,"Enable Fish Audio emotion tags in synthesized audio",fishEmotions,y,delegate(bool value){fishEmotions=value;SaveSettings();}); y+=55;
+        // Keep a fixed viewport height so the WinForms AutoScroll mechanism can
+        // expose ALL children even when Capricob gives the options a short pane.
+        Panel pane=new Panel { Width=780, Height=305, BackColor=Back, ForeColor=Fore,
+            AutoScroll=true, AutoScrollMinSize=new Size(0,660) };
+        int y=13;
+        if(ShowAdvancedOptions)
+        {
+            Label debugHeader=new Label{Left=18,Top=y,Width=700,Height=22,ForeColor=Cyan,
+                Text="DEBUG / DIAGNOSTICS  ·  These controls are shown first in the mod loader",
+                Font=new Font("Segoe UI",8.5f,FontStyle.Bold)};
+            pane.Controls.Add(debugHeader); y+=28;
+            Button inspect=new Button{Left=18,Top=y,Width=221,Height=33,Text="Reaction debugger (live)",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
+            inspect.Click+=delegate{ShowDebugger();};pane.Controls.Add(inspect);
+            Button rejects=new Button{Left=250,Top=y,Width=221,Height=33,Text="Recent generation rejections",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
+            rejects.Click+=delegate{ShowRejections();};pane.Controls.Add(rejects);
+            Button regenerate=new Button{Left=482,Top=y,Width=221,Height=33,Text="Regenerate one topic",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
+            regenerate.Click+=delegate{ShowRegenerate();};pane.Controls.Add(regenerate);
+            y+=41;
+            Button cache=new Button{Left=18,Top=y,Width=221,Height=33,Text="Audio / cache maintenance",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
+            cache.Click+=delegate{ShowCacheMaintenance();};pane.Controls.Add(cache);
+            Button test=new Button{Left=250,Top=y,Width=221,Height=33,Text="Test a dialogue line",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
+            test.Click+=delegate{ShowDialogueTest();};pane.Controls.Add(test);
+            Button memory=new Button{Left=482,Top=y,Width=221,Height=33,Text="Greeting memory: "+(greetingMemoryEnabled?"ON":"OFF"),FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
+            memory.Click+=delegate{ToggleGreetingMemory();memory.Text="Greeting memory: "+(greetingMemoryEnabled?"ON":"OFF");};pane.Controls.Add(memory);
+            y+=41;
+            Button pause=new Button{Left=18,Top=y,Width=221,Height=33,Text=generationPaused?"Resume background generation":"Pause background generation",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
+            pause.Click+=delegate{ToggleGenerationPause();pause.Text=generationPaused?"Resume background generation":"Pause background generation";};pane.Controls.Add(pause);
+            Button spoken=new Button{Left=250,Top=y,Width=221,Height=33,Text="Last spoken reactions",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
+            spoken.Click+=delegate{ShowHistory();};pane.Controls.Add(spoken);
+            Button blacklists=new Button{Left=482,Top=y,Width=221,Height=33,Text="Permanent reaction blacklists",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
+            blacklists.Click+=delegate{ShowPermanentBlacklists();};pane.Controls.Add(blacklists);
+            y+=42;
+            Label status=new Label{Left=18,Top=y,Width=720,Height=34,ForeColor=Color.FromArgb(175,191,210),
+                Text=lastError==null?"Generator diagnostics: no recorded runtime error. (Filtered candidates are normal.)":
+                    "Last runtime error: "+Short(lastError,115)};
+            pane.Controls.Add(status); y+=42;
+        }
+        Label settingsHeader=new Label{Left=18,Top=y,Width=700,Height=22,ForeColor=Cyan,
+            Text="SETTINGS",Font=new Font("Segoe UI",8.5f,FontStyle.Bold)};
+        pane.Controls.Add(settingsHeader); y+=26;
+        AddSetting(pane,"Allow 5-second cursor lock (Esc releases)",cursorLock,y,delegate(bool value){cursorLock=value;SaveSettings();PrepareRetaliationAnnouncements();}); y+=48;
+        AddSetting(pane,"Allow icon shuffle (restores after 10 seconds)",iconShuffle,y,delegate(bool value){iconShuffle=value;SaveSettings();PrepareRetaliationAnnouncements();}); y+=48;
+        AddSetting(pane,"Enable Fish Audio emotion tags in synthesized audio",fishEmotions,y,delegate(bool value){fishEmotions=value;SaveSettings();}); y+=48;
         AddSetting(pane,"Show floating dialogue loading bar (bottom-right by default)",progressVisible,y,
-            delegate(bool value){SetProgressVisible(value);}); y+=58;
+            delegate(bool value){SetProgressVisible(value);}); y+=53;
         Label split=new Label{Left=18,Top=y,Width=700,Height=18,ForeColor=Cyan,
             Text="ADDITIONS",Font=new Font("Segoe UI",8.25f,FontStyle.Bold)}; pane.Controls.Add(split); y+=24;
         Button extras=new Button{Left=18,Top=y,Width=300,Height=34,Text="Choose what she generates...",
@@ -2659,20 +2703,10 @@ public sealed class AiResponseOverhaul : ICapriMod
         extras.Click+=delegate{ShowGroupPicker();};pane.Controls.Add(extras);
         Label aside=new Label{Left=330,Top=y+9,Width=420,Height=18,ForeColor=Color.FromArgb(150,165,180),
             Text="Extra AI lines. Anything off keeps her built-in ones."};
-        pane.Controls.Add(aside); y+=48;
-        if(!ShowAdvancedOptions){pane.Height=y+12;return pane;}
-        Button inspect=new Button{Left=18,Top=y,Width=158,Height=34,Text="Reaction debugger",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
-        inspect.Click+=delegate{ShowDebugger();};pane.Controls.Add(inspect);
-        Button regenerate=new Button{Left=462,Top=y,Width=204,Height=34,Text="Regenerate one topic",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
-        regenerate.Click+=delegate{ShowRegenerate();};pane.Controls.Add(regenerate);
-        y+=43;
-        Button controls=new Button{Left=18,Top=y,Width=215,Height=32,Text="Audio / cache maintenance",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
-        controls.Click+=delegate{ShowCacheMaintenance();};pane.Controls.Add(controls);
-        Button policy=new Button{Left=245,Top=y,Width=215,Height=32,Text="Test a dialogue line",FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
-        policy.Click+=delegate{ShowDialogueTest();};pane.Controls.Add(policy);
-        Button memory=new Button{Left=475,Top=y,Width=235,Height=32,Text="Greeting memory: "+(greetingMemoryEnabled?"ON":"OFF"),FlatStyle=FlatStyle.Flat,ForeColor=Back,BackColor=Cyan};
-        memory.Click+=delegate{ToggleGreetingMemory();memory.Text="Greeting memory: "+(greetingMemoryEnabled?"ON":"OFF");};pane.Controls.Add(memory);
-        pane.Height=y+44;
+        pane.Controls.Add(aside); y+=53;
+        // Unlike setting Height to the total content height, AutoScrollMinSize
+        // leaves the loader viewport small and lets the user scroll the options.
+        pane.AutoScrollMinSize=new Size(0,y+8);
         return pane;
     }
     private void SetGroupEnabled(string group,bool on)
