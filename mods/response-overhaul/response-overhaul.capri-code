@@ -26,7 +26,7 @@ public sealed class AiResponseOverhaul : ICapriMod
     // true shows DEBUG / DIAGNOSTICS at the TOP of the loader options.
     // These tools are accessible immediately; other options scroll below.
     // They remain in Capri's mod menu when this is false.
-    private static readonly bool ShowAdvancedOptions = true;
+    private static readonly bool ShowAdvancedOptions = false;
 
     // Lines kept ready per reaction, 1..24; anything unlisted uses this.
     private const int DefaultLinesPerAction = 2;
